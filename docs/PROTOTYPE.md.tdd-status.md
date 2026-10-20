@@ -1,5 +1,5 @@
 # TDD Status
-Plan: src/shared/config-assembler-engine/docs/SPEC.md
+Plan: docs/SPEC.md
 
 ## Done
 - [x] Cycle 1: Domain Models + Errors (2026-06-11)
@@ -16,7 +16,7 @@ Plan: src/shared/config-assembler-engine/docs/SPEC.md
 ## Decisions Made
 - Models use simple `__init__` classes (matching PROTOTYPE convention, not dataclass)
 - Tests use `==` instead of `is` for generic type comparisons (Python 3.14 generic alias behavior)
-- Package structure follows sibling `oci-runtime` convention: `src/shared/config-assembler-engine/src/config_assembler_engine/`
+- Package structure: one package at the repo root, `src/config_assembler_engine/` (extracted from the `dotfiles-v3` monorepo in S2a)
 - Port protocols are pure `typing.Protocol` (no `@runtime_checkable`), structural subtyping verified via `callable` checks
 - `bool` check placed before `int` check in coercer (Python bool is subclass of int)
 

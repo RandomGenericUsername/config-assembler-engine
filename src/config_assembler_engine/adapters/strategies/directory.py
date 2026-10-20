@@ -1,6 +1,11 @@
 from pathlib import Path
 
-from config_assembler_engine.domain.models import PathSource, ResolutionPolicy, ResourceKind, ResolvedPath
+from config_assembler_engine.domain.models import (
+    PathSource,
+    ResolutionPolicy,
+    ResolvedPath,
+    ResourceKind,
+)
 
 
 class DirectoryTraversalStrategy:
@@ -22,7 +27,9 @@ class DirectoryTraversalStrategy:
             candidate = check_dir / self._filename
             check = candidate.is_file if self._kind == ResourceKind.FILE else candidate.is_dir
             if check():
-                return ResolvedPath(path=candidate.resolve(), source=PathSource.DIRECTORY, kind=self._kind)
+                return ResolvedPath(
+                    path=candidate.resolve(), source=PathSource.DIRECTORY, kind=self._kind
+                )
         return None
 
 

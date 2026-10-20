@@ -2,10 +2,17 @@
 name = "config-assembler-engine"
 version = "0.1.0"
 description = "Strictly hexagonal configuration resolution engine"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
 dependencies = [
     "pydantic>=2.0",
     "pyyaml>=6.0.3",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Typing :: Typed",
 ]
 
 [project.optional-dependencies]
@@ -13,11 +20,24 @@ yaml = ["pyyaml>=6.0"]
 all = ["pyyaml>=6.0"]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/config_assembler_engine"]
+
+# The harness trees (.agents/, _bmad/, .opencode/, openspec/, tickets/) are not
+# package content; keep them out of the sdist.
+[tool.hatch.build.targets.sdist]
+only-include = [
+    "pyproject.toml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "src/config_assembler_engine",
+    "tests",
+    "docs",
+]
 
 [tool.uv.sources]
 
@@ -32,6 +52,11 @@ line-length = 100
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP", "B"]
 ignore = ["B905"]
+
+# `NotADirectoryError_` is public API: it is exported from the package root and
+# raised by `AssembleDir`. Renaming it is a breaking change, not a lint fix.
+[tool.ruff.lint.per-file-ignores]
+"src/config_assembler_engine/errors.py" = ["N801", "N818"]
 
 [tool.ruff.format]
 quote-style = "double"

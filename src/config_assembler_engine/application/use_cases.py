@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from pydantic import BaseModel
 
 from config_assembler_engine.domain.models import (
@@ -15,7 +13,6 @@ from config_assembler_engine.errors import (
     ConfigValidationError,
     NotADirectoryError_,
     OverrideCoercionError,
-    PathResolutionError,
 )
 from config_assembler_engine.ports.config_parser import ConfigParserPort
 from config_assembler_engine.ports.config_validator import ConfigValidatorPort

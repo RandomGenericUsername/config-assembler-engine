@@ -1,6 +1,11 @@
 from pathlib import Path
 
-from config_assembler_engine.domain.models import PathSource, ResolutionPolicy, ResourceKind, ResolvedPath
+from config_assembler_engine.domain.models import (
+    PathSource,
+    ResolutionPolicy,
+    ResolvedPath,
+    ResourceKind,
+)
 
 
 class DefaultFileStrategy:
@@ -15,7 +20,9 @@ class DefaultFileStrategy:
     ) -> ResolvedPath | None:
         check = self._path.is_file if self._kind == ResourceKind.FILE else self._path.is_dir
         if check():
-            return ResolvedPath(path=self._path.resolve(), source=PathSource.DEFAULT, kind=self._kind)
+            return ResolvedPath(
+                path=self._path.resolve(), source=PathSource.DEFAULT, kind=self._kind
+            )
         return None
 
 

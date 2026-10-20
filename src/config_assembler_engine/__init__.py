@@ -7,8 +7,8 @@ from config_assembler_engine.domain.models import (
     OverrideSource,
     PathSource,
     ResolutionPolicy,
-    ResourceKind,
     ResolvedPath,
+    ResourceKind,
 )
 from config_assembler_engine.errors import ConfigAssemblerError, NotADirectoryError_
 

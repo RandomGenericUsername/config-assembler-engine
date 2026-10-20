@@ -1,6 +1,11 @@
 from pathlib import Path
 
-from config_assembler_engine.domain.models import PathSource, ResolutionPolicy, ResourceKind, ResolvedPath
+from config_assembler_engine.domain.models import (
+    PathSource,
+    ResolutionPolicy,
+    ResolvedPath,
+    ResourceKind,
+)
 
 
 class CliPathStrategy:

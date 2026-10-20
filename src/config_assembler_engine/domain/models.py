@@ -35,7 +35,9 @@ class OverrideRule:
 
 
 class ResolvedPath:
-    def __init__(self, path: Path, source: PathSource, kind: ResourceKind = ResourceKind.FILE) -> None:
+    def __init__(
+        self, path: Path, source: PathSource, kind: ResourceKind = ResourceKind.FILE
+    ) -> None:
         self.path = path
         self.source = source
         self.kind = kind
