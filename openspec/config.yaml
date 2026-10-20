@@ -1,0 +1,30 @@
+schema: spec-driven
+
+# Project context (constraints an agent cannot infer from the code).
+context: |
+  `config-assembler-engine` is the shared settings/config resolution engine for
+  the dotfiles CLI toolchain (spine AD-1/AD-2): a strategy chain for *where*
+  settings live (CLI path -> env path -> cwd traversal -> XDG -> default file),
+  parser ports (TOML/YAML/JSON), a Pydantic validator, an env/CLI override
+  matcher, a type coercer, and a merge that re-validates. One package, repo root
+  = package root: `src/config_assembler_engine/`, `tests/` at the top level, no
+  nested project roots. The engine knows no tool's XDG subdir or settings
+  filename: each consumer supplies its own strategy chain, filename and env
+  prefix. Consumers are the three CLIs only (`csg`, `weg`, `itr`); the runtime
+  and provisioning do not depend on it. It imports no sibling repo. Consumers pin
+  immutable git tags, never paths. Repo contract in AGENTS.md (CLAUDE.md
+  symlinks there) applies to all artifacts.
+
+# Per-artifact rules (from mu; the evidence rule is not optional).
+rules:
+  proposal:
+    - "Every claim carries Evidence (file path + lines, commit SHA, URL + quote, or prototype command + observed output) and a one-command Verify step; mark Evidence MISSING rather than stating unproven claims as fact."
+    - "Always state what is out of scope."
+  specs:
+    - "Each requirement states its acceptance check (command to run + expected result)."
+    - "Cite the source of each requirement (prior-art path, user statement, or prototype output)."
+  design:
+    - "Include a verification plan - what prototype or test validates each key decision, with exact commands."
+    - "No component without an evidence-backed reason to exist."
+  tasks:
+    - "Each task ends with an observable check (command + expected output); break tasks into chunks of max 2 hours."
