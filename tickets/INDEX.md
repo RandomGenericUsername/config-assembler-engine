@@ -10,7 +10,7 @@
 
 ## Requirements
 
-- [REQ-001-repo-birth](./REQ-001-repo-birth/ticket.md) — Birth the config-assembler-engine repo, mu-strict, with a v0.1.0 tag | `in-progress` | openspec: repo-birth
+(none)
 
 ## Bugs
 
@@ -30,4 +30,4 @@
 
 ## Done (links only, newest last)
 
-(none)
+- [REQ-001-repo-birth](./REQ-001-repo-birth/ticket.md) — Birth the config-assembler-engine repo, mu-strict, with a v0.1.0 tag | `done` | openspec: repo-birth (open; closes when the change is archived)
