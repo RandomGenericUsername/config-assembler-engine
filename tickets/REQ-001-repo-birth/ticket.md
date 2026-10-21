@@ -144,6 +144,7 @@ Re-verification results (all commands from the repo root at `main` `d72a10b`):
 | Release still carries both artifacts | `gh release view v0.1.0 --json assets` | `{"assets":["config_assembler_engine-0.1.0-py3-none-any.whl","config_assembler_engine-0.1.0.tar.gz"],"draft":false,"prerelease":false,"tag":"v0.1.0"}`, exit 0 |
 | Last three CI runs are green | `gh run list -R RandomGenericUsername/config-assembler-engine --limit 3 --json databaseId,conclusion` | `39355451177` / `39355306264` / `39355235533`, all `conclusion: success` |
 | Change archived, specs valid | `openspec archive repo-birth --yes`; `openspec validate --all --strict` | `Change 'repo-birth' archived as '2026-10-21-repo-birth'.`; `✓ spec/config-resolution-chain`, `✓ spec/repo-harness`, `Totals: 2 passed, 0 failed`, exit 0 |
+| Pushed commit's CI is green | `gh run watch 39623851667 --exit-status`; `gh run view 39623851667 --json conclusion,jobs` | exit 0; `conclusion: success`; jobs `test`, `lint`, `hermetic`, `lock-check`, `docs-check`, `ci-gates-parity` all `success`, `release` `skipped` (not a tag) — https://github.com/RandomGenericUsername/config-assembler-engine/actions/runs/39623851667 |
 
 **`uv tool install` does not apply to this package.** The prescribed isolated check,
 `uv tool install "git+…@v0.1.0"`, exits `2` with
@@ -161,3 +162,12 @@ the equivalent checks are `openspec validate --specs --strict` and `openspec val
 --strict`, both `Totals: 2 passed, 0 failed`, exit 0. Archiving wrote a placeholder `## Purpose`
 into `repo-harness`, which `--strict` rejected; it was replaced with a real purpose paragraph in
 this same commit before validation was re-run.
+
+**`dotfiles-v3` SHA note (discrepancy, stated rather than papered over).** The acceptance box
+above records `843b50d0d000d3497b625627bc58fb6427366b59` as "the same SHA as before the slice".
+That was true on `2026-10-19`; re-running the Verify command on `2026-10-21` returns
+`56fc4b7efcd410f59f194f5560c6e7d2962f7386`, because unrelated work has landed in `dotfiles-v3`
+since the slice. The claim this closeout can and does re-prove is narrower: this ticket made no
+change in that repo. Evidence: `git -C /home/inumaki/Development/dotfiles-v3 status --porcelain`
+→ empty; the only commits in this closeout are the two `plan(REQ-001)` commits in *this* repo,
+whose diff touches `openspec/` and `tickets/` only (`git show --stat`).
