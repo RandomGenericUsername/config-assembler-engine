@@ -7,8 +7,8 @@ lane: 3
 links:
   openspec: repo-birth
   bmad: none
-worktree: none
-branch: ticket/req-001-repo-birth
+worktree: .worktrees/req-001-archive/
+branch: ticket/req-001-archive-archive-change
 ---
 
 # Birth the config-assembler-engine repo (mu-strict) and cut v0.1.0
@@ -122,3 +122,42 @@ Slice commits (oldest first, all on `main`):
 | --- | --- |
 | `a2d3ad6` | `plan(REQ-001): open repo-birth ticket, OpenSpec change, and release docs` |
 | `cad8a91` | `feat(REQ-001): mu-strict harness, fresh-clone gates, and release CI` |
+
+## Closeout 2 — re-verification and archive (2026-10-21)
+
+The record above was written on `2026-10-19` when the change was still open. This second pass,
+on `ticket/req-001-archive-archive-change` (worktree `.worktrees/req-001-archive/`, created by
+`bash scripts/worktree-guard.sh create req-001-archive archive-change` → exit 0), **re-ran every
+gate before trusting any ticked box**, then archived the OpenSpec change so the ticket's last open
+link closes.
+
+Re-verification results (all commands from the repo root at `main` `d72a10b`):
+
+| Claim | Command | Result |
+| --- | --- | --- |
+| Tree clean before ticking | `git status --porcelain`; `bash scripts/worktree-guard.sh check-clean` | empty output; exit 0, exit 0 |
+| Gate set is green now | `make gates` | `163 passed` (test), `All checks passed!` (lint), `163 passed` (hermetic), `Resolved 16 packages` (lock-check), docs-check silent → exit 0 |
+| Workflow ↔ Makefile parity | `make ci-gates-parity` | `PASS gates=['docs-check', 'hermetic', 'lint', 'lock-check', 'test'] jobs=['ci-gates-parity', 'docs-check', 'hermetic', 'lint', 'lock-check', 'release', 'test'] exempt=['ci-gates-parity', 'release']`, exit 0 |
+| Packaging builds from a clean `dist/` | `rm -rf dist && uv build` | `Successfully built dist/config_assembler_engine-0.1.0.tar.gz` + `dist/config_assembler_engine-0.1.0-py3-none-any.whl`, exit 0 |
+| The published tag installs and imports in isolation | `uv venv /tmp/opencode/cae-tag-venv && uv pip install --no-cache "git+…@v0.1.0"` then `python -c 'importlib.metadata.version + import'` | install exit 0; `version: 0.1.0`; `missing_public_names: []`; `direct_url` records `requested_revision: v0.1.0`, `commit_id: cad8a91c6bcbc4087209911bc36d82f8b6349f66` |
+| Tag still objects as stated | `git rev-parse v0.1.0`; `git rev-parse 'v0.1.0^{commit}'`; `git cat-file -t v0.1.0` | `5c5cc84e4103f1135a717320cf7cb809487d6e5e`; `cad8a91c6bcbc4087209911bc36d82f8b6349f66`; `tag` |
+| Release still carries both artifacts | `gh release view v0.1.0 --json assets` | `{"assets":["config_assembler_engine-0.1.0-py3-none-any.whl","config_assembler_engine-0.1.0.tar.gz"],"draft":false,"prerelease":false,"tag":"v0.1.0"}`, exit 0 |
+| Last three CI runs are green | `gh run list -R RandomGenericUsername/config-assembler-engine --limit 3 --json databaseId,conclusion` | `39355451177` / `39355306264` / `39355235533`, all `conclusion: success` |
+| Change archived, specs valid | `openspec archive repo-birth --yes`; `openspec validate --all --strict` | `Change 'repo-birth' archived as '2026-10-21-repo-birth'.`; `✓ spec/config-resolution-chain`, `✓ spec/repo-harness`, `Totals: 2 passed, 0 failed`, exit 0 |
+
+**`uv tool install` does not apply to this package.** The prescribed isolated check,
+`uv tool install "git+…@v0.1.0"`, exits `2` with
+`No executables are provided by package 'config-assembler-engine'; removing tool` /
+`error: Failed to install entrypoints` — correct behaviour for a library that exposes no console
+script, not a release defect. The equivalent isolated proof is a throwaway `uv venv` plus
+`uv pip install` of the same tag (row above): version `0.1.0`, all twelve public names importable,
+and `direct_url.json` pinning the peeled commit. Reproduce in one command:
+`uv venv /tmp/x && uv pip install --python /tmp/x/bin/python "git+https://github.com/RandomGenericUsername/config-assembler-engine@v0.1.0" && /tmp/x/bin/python -c 'import importlib.metadata as md; print(md.version("config-assembler-engine"))'` → `0.1.0`.
+
+**Archive note.** Archiving moved the change to `openspec/changes/archive/2026-10-21-repo-birth/`
+and merged its delta into the new `openspec/specs/repo-harness/spec.md`. The acceptance check
+`openspec validate repo-birth --strict` was accurate while the change was active; once archived
+the equivalent checks are `openspec validate --specs --strict` and `openspec validate --all
+--strict`, both `Totals: 2 passed, 0 failed`, exit 0. Archiving wrote a placeholder `## Purpose`
+into `repo-harness`, which `--strict` rejected; it was replaced with a real purpose paragraph in
+this same commit before validation was re-run.
